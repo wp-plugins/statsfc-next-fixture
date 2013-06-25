@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.0
+Version: 1.0.1
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -32,6 +32,8 @@ define('STATSFC_NEXTFIXTURE_NAME',	'StatsFC Next Fixture');
  * Adds StatsFC widget.
  */
 class StatsFC_NextFixture extends WP_Widget {
+	private static $_offsets = array('-12:00', '-11:00', '-10:00', '-09:30', '-09:00', '-08:00', '-07:00', '-06:00', '-05:00', '-04:30', '-04:00', '-03:30', '-03:00', '-02:00', '-01:00', '00:00', '+01:00', '+02:00', '+03:00', '+03:30', '+04:00', '+04:30', '+05:00', '+05:30', '+05:45', '+06:00', '+06:30', '+07:00', '+08:00', '+08:45', '+09:00', '+09:30', '+10:00', '+10:30', '+11:00', '+11:30', '+12:00', '+12:45', '+13:00', '+14:00');
+
 	/**
 	 * Register widget with WordPress.
 	 */
@@ -51,6 +53,7 @@ class StatsFC_NextFixture extends WP_Widget {
 			'title'			=> __('Next Fixture', STATSFC_NEXTFIXTURE_ID),
 			'api_key'		=> __('', STATSFC_NEXTFIXTURE_ID),
 			'team'			=> __('', STATSFC_NEXTFIXTURE_ID),
+			'tz_offset'		=> __('00:00', STATSFC_NEXTFIXTURE_ID),
 			'default_css'	=> __('', STATSFC_NEXTFIXTURE_ID)
 		);
 
@@ -58,6 +61,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= strip_tags($instance['title']);
 		$api_key		= strip_tags($instance['api_key']);
 		$team			= strip_tags($instance['team']);
+		$tz_offset		= strip_tags($instance['tz_offset']);
 		$default_css	= strip_tags($instance['default_css']);
 		?>
 		<p>
@@ -105,6 +109,24 @@ class StatsFC_NextFixture extends WP_Widget {
 				?>
 			</label>
 		</p>
+		<?php
+		if (! class_exists('DateTime')) {
+		?>
+			<p>
+				<label>
+					<?php _e('UTC offset', STATSFC_NEXTFIXTURE_ID); ?>:
+					<select class="widefat" name="<?php echo $this->get_field_name('tz_offset'); ?>">
+						<?php
+						foreach (self::$_offsets as $offset) {
+							echo '<option value="' . esc_attr($offset) . '"' . ($offset == $tz_offset ? ' selected' : '') . '>' . esc_attr($offset) . '</option>' . PHP_EOL;
+						}
+						?>
+					</select>
+				</label>
+			</p>
+		<?php
+		}
+		?>
 		<p>
 			<label>
 				<?php _e('Use default CSS?', STATSFC_NEXTFIXTURE_ID); ?>
@@ -129,6 +151,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$instance['title']			= strip_tags($new_instance['title']);
 		$instance['api_key']		= strip_tags($new_instance['api_key']);
 		$instance['team']			= strip_tags($new_instance['team']);
+		$instance['tz_offset']		= strip_tags($new_instance['tz_offset']);
 		$instance['default_css']	= strip_tags($new_instance['default_css']);
 
 		return $instance;
@@ -148,6 +171,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= apply_filters('widget_title', $instance['title']);
 		$api_key		= $instance['api_key'];
 		$team			= $instance['team'];
+		$tz_offset		= $instance['tz_offset'];
 		$default_css	= $instance['default_css'];
 
 		echo $before_widget;
@@ -187,8 +211,8 @@ class StatsFC_NextFixture extends WP_Widget {
 			$awayPath		= esc_attr(str_replace(' ', '-', strtolower($fixture->away)));
 			$awayClass		= esc_attr(str_replace(' ', '', strtolower($fixture->away)));
 			$competition	= esc_attr($fixture->competition);
-			$date			= self::_convertDate($fixture->date, 'l, jS F Y');
-			$time			= self::_convertDate($fixture->date, 'H:i');
+			$date			= self::_convertDate($fixture->date, 'l, jS F Y', $tz_offset);
+			$time			= self::_convertDate($fixture->date, 'H:i', $tz_offset);
 			?>
 			<div class="statsfc_nextfixture">
 				<table>
@@ -221,7 +245,11 @@ class StatsFC_NextFixture extends WP_Widget {
 		echo $after_widget;
 	}
 
-	private static function _convertDate($timestamp, $format) {
+	private static function _convertDate($timestamp, $format, $offset) {
+		if (! class_exists('DateTime')) {
+			return date($format, strtotime($timestamp . ' ' . ($offset[0] == '-' ? '+' : '-') . substr($offset, 1)));
+		}
+
 		$datetime = new DateTime($timestamp, new DateTimeZone('GMT'));
 		$datetime->setTimezone(new DateTimeZone(get_option('timezone_string')));
 
