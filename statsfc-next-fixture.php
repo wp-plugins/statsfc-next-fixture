@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.0.1
+Version: 1.0.2
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -80,9 +80,9 @@ class StatsFC_NextFixture extends WP_Widget {
 			<label>
 				<?php _e('Team', STATSFC_NEXTFIXTURE_ID); ?>:
 				<?php
-				$data = file_get_contents('http://api.statsfc.com/premier-league/teams.json?key=' . (! empty($api_key) ? $api_key : 'free'));
-
 				try {
+					$data = $this->_fetchData('http://api.statsfc.com/premier-league/teams.json?key=' . (! empty($api_key) ? $api_key : 'free'));
+
 					if (empty($data)) {
 						throw new Exception('There was an error connecting to the StatsFC API');
 					}
@@ -182,7 +182,7 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = file_get_contents('https://api.statsfc.com/' . esc_attr($team) . '/fixtures.json?key=' . $api_key . '&limit=1');
+			$data = $this->_fetchData('https://api.statsfc.com/' . esc_attr($team) . '/fixtures.json?key=' . $api_key . '&limit=1');
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
@@ -245,6 +245,28 @@ class StatsFC_NextFixture extends WP_Widget {
 		echo $after_widget;
 	}
 
+	private function _fetchData($url) {
+		if (function_exists('curl_exec')) {
+			$ch = curl_init();
+
+			curl_setopt_array($ch, array(
+				CURLOPT_AUTOREFERER		=> true,
+				CURLOPT_FOLLOWLOCATION	=> true,
+				CURLOPT_HEADER			=> false,
+				CURLOPT_RETURNTRANSFER	=> true,
+				CURLOPT_TIMEOUT			=> 5,
+				CURLOPT_URL				=> $url
+			));
+
+			$data = curl_exec($ch);
+			curl_close($ch);
+
+			return $data;
+		}
+
+		return file_get_contents($url);
+	}
+
 	private static function _convertDate($timestamp, $format, $offset) {
 		if (! class_exists('DateTime')) {
 			return date($format, strtotime($timestamp . ' ' . ($offset[0] == '-' ? '+' : '-') . substr($offset, 1)));
@@ -259,4 +281,3 @@ class StatsFC_NextFixture extends WP_Widget {
 
 // register StatsFC widget
 add_action('widgets_init', create_function('', 'register_widget("' . STATSFC_NEXTFIXTURE_ID . '");'));
-?>
