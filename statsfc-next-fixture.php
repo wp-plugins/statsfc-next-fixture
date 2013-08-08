@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.0.2
+Version: 1.0.3
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -204,8 +204,8 @@ class StatsFC_NextFixture extends WP_Widget {
 				wp_enqueue_style(STATSFC_NEXTFIXTURE_ID . '-css');
 			}
 
-			$home			= esc_attr($fixture->home);
-			$away			= esc_attr($fixture->away);
+			$home			= esc_attr($fixture->homeshort);
+			$away			= esc_attr($fixture->awayshort);
 			$homePath		= esc_attr(str_replace(' ', '-', strtolower($fixture->home)));
 			$homeClass		= esc_attr(str_replace(' ', '', strtolower($fixture->home)));
 			$awayPath		= esc_attr(str_replace(' ', '-', strtolower($fixture->away)));
