@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.0.3
+Version: 1.0.4
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
