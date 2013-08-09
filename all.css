@@ -1,7 +1,7 @@
 .statsfc_nextfixture table {				display: table; width: 100%; border-collapse: collapse; margin-bottom: 0; }
 .statsfc_nextfixture tr {					vertical-align: top; }
 .statsfc_nextfixture td {					text-align: center; padding: 2px 5px; }
-.statsfc_nextfixture img {					display: inline; width: 80px; height: 80px; padding: 0; margin: 0; border: none !important; }
+.statsfc_nextfixture img {					display: inline; width: 80px; height: 80px; max-width: 80px; max-height: 80px; padding: 0; margin: 0; border: none !important; }
 .statsfc_nextfixture .statsfc_home,
 .statsfc_nextfixture .statsfc_away {		width: 25%; }
 .statsfc_nextfixture .statsfc_team {		font-size: small; position: relative; top: -10px; }
