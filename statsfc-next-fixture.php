@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.0.6
+Version: 1.0.7
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -110,7 +110,7 @@ class StatsFC_NextFixture extends WP_Widget {
 			</label>
 		</p>
 		<?php
-		if (! class_exists('DateTime')) {
+		if (! self::_timezone()) {
 		?>
 			<p>
 				<label>
@@ -219,7 +219,7 @@ class StatsFC_NextFixture extends WP_Widget {
 					<tbody>
 						<tr>
 							<td class="statsfc_home statsfc_badge_<?php echo $homeClass; ?>">
-								<img src="//cdn.statsfc.com/<?php echo $homePath; ?>.png" title="<?php echo $home; ?>" width="80" height="80"><br>
+								<img src="//api.statsfc.com/kit/<?php echo $homePath; ?>.png" title="<?php echo $home; ?>" width="80" height="80"><br>
 								<span class="statsfc_team"><?php echo $home; ?></span>
 							</td>
 							<td class="statsfc_details">
@@ -228,7 +228,7 @@ class StatsFC_NextFixture extends WP_Widget {
 								<span class="statsfc_time"><?php echo $time; ?></span>
 							</td>
 							<td class="statsfc_away statsfc_badge_<?php echo $awayClass; ?>">
-								<img src="//cdn.statsfc.com/<?php echo $awayPath; ?>.png" title="<?php echo $away; ?>" width="80" height="80"><br>
+								<img src="//api.statsfc.com/kit/<?php echo $awayPath; ?>.png" title="<?php echo $away; ?>" width="80" height="80"><br>
 								<span class="statsfc_team"><?php echo $away; ?></span>
 							</td>
 						</tr>
@@ -279,14 +279,30 @@ class StatsFC_NextFixture extends WP_Widget {
 	}
 
 	private static function _convertDate($timestamp, $format, $offset) {
-		if (! class_exists('DateTime')) {
+		if (! ($timezone = self::_timezone())) {
 			return date($format, strtotime($timestamp . ' ' . ($offset[0] == '-' ? '+' : '-') . substr($offset, 1)));
 		}
 
 		$datetime = new DateTime($timestamp, new DateTimeZone('GMT'));
-		$datetime->setTimezone(new DateTimeZone(get_option('timezone_string')));
+		$datetime->setTimezone(new DateTimeZone($timezone));
 
 		return $datetime->format($format);
+	}
+
+	private static function _timezone() {
+		if (! class_exists('DateTime')) {
+			return false;
+		}
+
+		$timezone = get_option('timezone_string');
+
+		try {
+			$dtz = new DateTimeZone($timezone);
+		} catch (Exception $e) {
+			return false;
+		}
+
+		return $timezone;
 	}
 }
 
