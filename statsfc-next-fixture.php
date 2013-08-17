@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.0.7
+Version: 1.1
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -182,19 +182,28 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/' . esc_attr($team) . '/fixtures.json?key=' . $api_key . '&limit=1');
+			$data = $this->_fetchData('https://api.statsfc.com/' . esc_attr($team) . '/live.json?key=' . $api_key);
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
 			}
 
 			$json = json_decode($data);
-			if (isset($json->error)) {
-				throw new Exception($json->error);
-			}
+			if (isset($json->error) || count($json) == 0) {
+				$data = $this->_fetchData('https://api.statsfc.com/' . esc_attr($team) . '/fixtures.json?key=' . $api_key . '&limit=1');
 
-			if (count($json) == 0) {
-				throw new Exception('No fixtures found');
+				if (empty($data)) {
+					throw new Exception('There was an error connecting to the StatsFC API');
+				}
+
+				$json = json_decode($data);
+				if (isset($json->error)) {
+					throw new Exception($json->error);
+				}
+
+				if (count($json) == 0) {
+					throw new Exception('No fixtures found');
+				}
 			}
 
 			$fixture = current($json);
@@ -224,8 +233,21 @@ class StatsFC_NextFixture extends WP_Widget {
 							</td>
 							<td class="statsfc_details">
 								<span class="statsfc_competition"><?php echo $competition; ?></span><br>
-								<span class="statsfc_date"><?php echo $date; ?></span><br>
-								<span class="statsfc_time"><?php echo $time; ?></span>
+								<?php
+								if (isset($fixture->runningscore)) {
+								?>
+									<span class="statsfc_time">
+										Live: <?php echo esc_attr($fixture->statusshort); ?><br>
+										<strong><?php echo esc_attr($fixture->runningscore[0]); ?></strong> - <strong><?php echo esc_attr($fixture->runningscore[1]); ?></strong>
+									</span>
+								<?php
+								} else {
+								?>
+									<span class="statsfc_date"><?php echo $date; ?></span><br>
+									<span class="statsfc_time"><?php echo $time; ?></span>
+								<?php
+								}
+								?>
 							</td>
 							<td class="statsfc_away statsfc_badge_<?php echo $awayClass; ?>">
 								<img src="//api.statsfc.com/kit/<?php echo $awayPath; ?>.png" title="<?php echo $away; ?>" width="80" height="80"><br>
