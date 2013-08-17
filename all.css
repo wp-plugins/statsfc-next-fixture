@@ -8,4 +8,5 @@
 .statsfc_nextfixture .statsfc_details {		width: 50%; }
 .statsfc_nextfixture .statsfc_competition {	font-size: small; font-weight: bold; }
 .statsfc_nextfixture .statsfc_date {		font-weight: bold; }
+.statsfc_nextfixture .statsfc_score {		font-size: 1.5em; }
 .statsfc_nextfixture .statsfc_footer {		display: block !important; text-align: right; margin-top: 0; padding: 2px 5px; }

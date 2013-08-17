@@ -236,10 +236,8 @@ class StatsFC_NextFixture extends WP_Widget {
 								<?php
 								if (isset($fixture->runningscore)) {
 								?>
-									<span class="statsfc_time">
-										Live: <?php echo esc_attr($fixture->statusshort); ?><br>
-										<strong><?php echo esc_attr($fixture->runningscore[0]); ?></strong> - <strong><?php echo esc_attr($fixture->runningscore[1]); ?></strong>
-									</span>
+									<span class="statsfc_score"><?php echo esc_attr($fixture->runningscore[0]); ?> - <?php echo esc_attr($fixture->runningscore[1]); ?></span><br>
+									<span class="statsfc_live"><small>Live: <?php echo esc_attr($fixture->statusshort); ?></small></span>
 								<?php
 								} else {
 								?>
