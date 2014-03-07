@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.2
+Version: 1.2.1
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -85,20 +85,7 @@ class StatsFC_NextFixture extends WP_Widget {
 				<?php _e('Timezone', STATSFC_NEXTFIXTURE_ID); ?>:
 				<select class="widefat" name="<?php echo $this->get_field_name('timezone'); ?>">
 					<?php
-					$zones	= array();
-					$tza	= timezone_abbreviations_list();
-
-					foreach ($tza as $zone) {
-						foreach ($zone as $item) {
-							$id = $item['timezone_id'];
-
-							if (! in_array($id, $zones)) {
-								$zones[] = $id;
-							}
-						}
-					}
-
-					sort($zones);
+					$zones = timezone_identifiers_list();
 
 					foreach ($zones as $zone) {
 						echo '<option value="' . esc_attr($zone) . '"' . ($zone == $timezone ? ' selected' : '') . '>' . esc_attr($zone) . '</option>' . PHP_EOL;
