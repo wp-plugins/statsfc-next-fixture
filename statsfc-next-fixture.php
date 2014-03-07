@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.1.1
+Version: 1.2
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -32,8 +32,6 @@ define('STATSFC_NEXTFIXTURE_NAME',	'StatsFC Next Fixture');
  * Adds StatsFC widget.
  */
 class StatsFC_NextFixture extends WP_Widget {
-	private static $_offsets = array('-12:00', '-11:00', '-10:00', '-09:30', '-09:00', '-08:00', '-07:00', '-06:00', '-05:00', '-04:30', '-04:00', '-03:30', '-03:00', '-02:00', '-01:00', '00:00', '+01:00', '+02:00', '+03:00', '+03:30', '+04:00', '+04:30', '+05:00', '+05:30', '+05:45', '+06:00', '+06:30', '+07:00', '+08:00', '+08:45', '+09:00', '+09:30', '+10:00', '+10:30', '+11:00', '+11:30', '+12:00', '+12:45', '+13:00', '+14:00');
-
 	/**
 	 * Register widget with WordPress.
 	 */
@@ -53,7 +51,7 @@ class StatsFC_NextFixture extends WP_Widget {
 			'title'			=> __('Next Fixture', STATSFC_NEXTFIXTURE_ID),
 			'api_key'		=> __('', STATSFC_NEXTFIXTURE_ID),
 			'team'			=> __('', STATSFC_NEXTFIXTURE_ID),
-			'tz_offset'		=> __('00:00', STATSFC_NEXTFIXTURE_ID),
+			'timezone'		=> __('Europe/London', STATSFC_NEXTFIXTURE_ID),
 			'default_css'	=> __('', STATSFC_NEXTFIXTURE_ID)
 		);
 
@@ -61,7 +59,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= strip_tags($instance['title']);
 		$api_key		= strip_tags($instance['api_key']);
 		$team			= strip_tags($instance['team']);
-		$tz_offset		= strip_tags($instance['tz_offset']);
+		$timezone		= strip_tags($instance['timezone']);
 		$default_css	= strip_tags($instance['default_css']);
 		?>
 		<p>
@@ -79,54 +77,36 @@ class StatsFC_NextFixture extends WP_Widget {
 		<p>
 			<label>
 				<?php _e('Team', STATSFC_NEXTFIXTURE_ID); ?>:
-				<?php
-				try {
-					$data = $this->_fetchData('http://api.statsfc.com/premier-league/teams.json?key=' . (! empty($api_key) ? $api_key : 'free'));
-
-					if (empty($data)) {
-						throw new Exception('There was an error connecting to the StatsFC API');
-					}
-
-					$json = json_decode($data);
-					if (isset($json->error)) {
-						throw new Exception($json->error);
-					}
-					?>
-					<select class="widefat" name="<?php echo $this->get_field_name('team'); ?>">
-						<option></option>
-						<?php
-						foreach ($json as $row) {
-							echo '<option value="' . esc_attr($row->path) . '"' . ($row->path == $team ? ' selected' : '') . '>' . esc_attr($row->name) . '</option>' . PHP_EOL;
-						}
-						?>
-					</select>
-				<?php
-				} catch (Exception $e) {
-				?>
-					<input class="widefat" name="<?php echo $this->get_field_name('team'); ?>" type="text" value="<?php echo esc_attr($team); ?>">
-				<?php
-				}
-				?>
+				<input class="widefat" name="<?php echo $this->get_field_name('team'); ?>" type="text" value="<?php echo esc_attr($team); ?>">
 			</label>
 		</p>
-		<?php
-		if (! self::_timezone()) {
-		?>
-			<p>
-				<label>
-					<?php _e('UTC offset', STATSFC_NEXTFIXTURE_ID); ?>:
-					<select class="widefat" name="<?php echo $this->get_field_name('tz_offset'); ?>">
-						<?php
-						foreach (self::$_offsets as $offset) {
-							echo '<option value="' . esc_attr($offset) . '"' . ($offset == $tz_offset ? ' selected' : '') . '>' . esc_attr($offset) . '</option>' . PHP_EOL;
+		<p>
+			<label>
+				<?php _e('Timezone', STATSFC_NEXTFIXTURE_ID); ?>:
+				<select class="widefat" name="<?php echo $this->get_field_name('timezone'); ?>">
+					<?php
+					$zones	= array();
+					$tza	= timezone_abbreviations_list();
+
+					foreach ($tza as $zone) {
+						foreach ($zone as $item) {
+							$id = $item['timezone_id'];
+
+							if (! in_array($id, $zones)) {
+								$zones[] = $id;
+							}
 						}
-						?>
-					</select>
-				</label>
-			</p>
-		<?php
-		}
-		?>
+					}
+
+					sort($zones);
+
+					foreach ($zones as $zone) {
+						echo '<option value="' . esc_attr($zone) . '"' . ($zone == $timezone ? ' selected' : '') . '>' . esc_attr($zone) . '</option>' . PHP_EOL;
+					}
+					?>
+				</select>
+			</label>
+		</p>
 		<p>
 			<label>
 				<?php _e('Use default CSS?', STATSFC_NEXTFIXTURE_ID); ?>
@@ -151,7 +131,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$instance['title']			= strip_tags($new_instance['title']);
 		$instance['api_key']		= strip_tags($new_instance['api_key']);
 		$instance['team']			= strip_tags($new_instance['team']);
-		$instance['tz_offset']		= strip_tags($new_instance['tz_offset']);
+		$instance['timezone']		= strip_tags($new_instance['timezone']);
 		$instance['default_css']	= strip_tags($new_instance['default_css']);
 
 		return $instance;
@@ -171,7 +151,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= apply_filters('widget_title', $instance['title']);
 		$api_key		= $instance['api_key'];
 		$team			= $instance['team'];
-		$tz_offset		= $instance['tz_offset'];
+		$timezone		= $instance['timezone'];
 		$default_css	= $instance['default_css'];
 
 		echo $before_widget;
@@ -182,72 +162,52 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/' . esc_attr($team) . '/live.json?key=' . $api_key);
+			$data = $this->_fetchData('https://api.statsfc.com/widget/next-fixture.json.php?key=' . $api_key . '&team=' . $team . '&timezone=' . $timezone);
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
 			}
 
 			$json = json_decode($data);
-			if (isset($json->error) || count($json) == 0) {
-				$data = $this->_fetchData('https://api.statsfc.com/' . esc_attr($team) . '/fixtures.json?key=' . $api_key . '&limit=1');
 
-				if (empty($data)) {
-					throw new Exception('There was an error connecting to the StatsFC API');
-				}
-
-				$json = json_decode($data);
-				if (isset($json->error)) {
-					throw new Exception($json->error);
-				}
-
-				if (count($json) == 0) {
-					throw new Exception('No fixtures found');
-				}
+			if (isset($json->error)) {
+				throw new Exception($json->error);
 			}
 
-			$fixture = current($json);
+			if (count($json) == 0) {
+				throw new Exception('No fixtures found');
+			}
+
+			$fixture	= $json->fixture;
+			$customer	= $json->customer;
 
 			if ($default_css) {
 				wp_register_style(STATSFC_NEXTFIXTURE_ID . '-css', plugins_url('all.css', __FILE__));
 				wp_enqueue_style(STATSFC_NEXTFIXTURE_ID . '-css');
 			}
 
-			$home			= esc_attr($fixture->homeshort);
-			$away			= esc_attr($fixture->awayshort);
-			$homePath		= esc_attr(str_replace(' ', '-', strtolower($fixture->home)));
-			$homeClass		= esc_attr(str_replace(' ', '', strtolower($fixture->home)));
-			$awayPath		= esc_attr(str_replace(' ', '-', strtolower($fixture->away)));
-			$awayClass		= esc_attr(str_replace(' ', '', strtolower($fixture->away)));
+			$home			= esc_attr($fixture->home);
+			$away			= esc_attr($fixture->away);
+			$homePath		= esc_attr($fixture->homepath);
+			$awayPath		= esc_attr($fixture->awaypath);
 			$competition	= esc_attr($fixture->competition);
-			$date			= self::_convertDate($fixture->date, 'l, jS F Y', $tz_offset);
-			$time			= self::_convertDate($fixture->date, 'H:i', $tz_offset);
+			$date			= esc_attr($fixture->date);
+			$time			= esc_attr($fixture->time);
 			?>
 			<div class="statsfc_nextfixture">
 				<table>
 					<tbody>
 						<tr>
-							<td class="statsfc_home statsfc_badge_<?php echo $homeClass; ?>">
+							<td class="statsfc_home">
 								<img src="//api.statsfc.com/kit/<?php echo $homePath; ?>.png" title="<?php echo $home; ?>" width="80" height="80"><br>
 								<span class="statsfc_team"><?php echo $home; ?></span>
 							</td>
 							<td class="statsfc_details">
 								<span class="statsfc_competition"><?php echo $competition; ?></span><br>
-								<?php
-								if (isset($fixture->runningscore)) {
-								?>
-									<span class="statsfc_score"><?php echo esc_attr($fixture->runningscore[0]); ?> - <?php echo esc_attr($fixture->runningscore[1]); ?></span><br>
-									<span class="statsfc_live"><small>Live: <?php echo esc_attr($fixture->statusshort); ?></small></span>
-								<?php
-								} else {
-								?>
-									<span class="statsfc_date"><?php echo $date; ?></span><br>
-									<span class="statsfc_time"><?php echo $time; ?></span>
-								<?php
-								}
-								?>
+								<span class="statsfc_date"><?php echo $date; ?></span><br>
+								<span class="statsfc_time"><?php echo $time; ?></span>
 							</td>
-							<td class="statsfc_away statsfc_badge_<?php echo $awayClass; ?>">
+							<td class="statsfc_away">
 								<img src="//api.statsfc.com/kit/<?php echo $awayPath; ?>.png" title="<?php echo $away; ?>" width="80" height="80"><br>
 								<span class="statsfc_team"><?php echo $away; ?></span>
 							</td>
@@ -255,7 +215,13 @@ class StatsFC_NextFixture extends WP_Widget {
 					</tbody>
 				</table>
 
-				<p class="statsfc_footer"><small>Powered by StatsFC.com</small></p>
+				<?php
+				if ($customer->advert) {
+				?>
+					<p class="statsfc_footer"><small>Powered by StatsFC.com</small></p>
+				<?php
+				}
+				?>
 			</div>
 		<?php
 		} catch (Exception $e) {
@@ -296,33 +262,6 @@ class StatsFC_NextFixture extends WP_Widget {
 
 	private function _fopenRequest($url) {
 		return file_get_contents($url);
-	}
-
-	private static function _convertDate($timestamp, $format, $offset) {
-		if (! ($timezone = self::_timezone())) {
-			return date($format, strtotime($timestamp . ' ' . ($offset[0] == '-' ? '+' : '-') . substr($offset, 1)));
-		}
-
-		$datetime = new DateTime($timestamp, new DateTimeZone('GMT'));
-		$datetime->setTimezone(new DateTimeZone($timezone));
-
-		return $datetime->format($format);
-	}
-
-	private static function _timezone() {
-		if (! class_exists('DateTime')) {
-			return false;
-		}
-
-		$timezone = get_option('timezone_string');
-
-		try {
-			$dtz = new DateTimeZone($timezone);
-		} catch (Exception $e) {
-			return false;
-		}
-
-		return $timezone;
 	}
 }
 
