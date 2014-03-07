@@ -161,10 +161,6 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception($json->error);
 			}
 
-			if (count($json) == 0) {
-				throw new Exception('No fixtures found');
-			}
-
 			$fixture	= $json->fixture;
 			$customer	= $json->customer;
 
@@ -212,7 +208,9 @@ class StatsFC_NextFixture extends WP_Widget {
 			</div>
 		<?php
 		} catch (Exception $e) {
-			echo '<p style="text-align: center;"><img src="//statsfc.com/i/icon.png" width="64" height="64" alt="Football widgets and API"><br><a href="https://statsfc.com" title="Football widgets and API" target="_blank">StatsFC.com</a> – ' . esc_attr($e->getMessage()) .'</p>' . PHP_EOL;
+		?>
+			<p>StatsFC.com – <?php echo esc_attr($e->getMessage()); ?></p>
+		<?php
 		}
 
 		echo $after_widget;
