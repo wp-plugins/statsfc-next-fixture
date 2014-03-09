@@ -145,11 +145,11 @@ class StatsFC_NextFixture extends WP_Widget {
 		echo $before_title . $title . $after_title;
 
 		try {
-			if (empty($team)) {
+			if (strlen($team) == 0) {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/widget/next-fixture.json.php?key=' . $api_key . '&team=' . $team . '&timezone=' . $timezone);
+			$data = $this->_fetchData('https://api.statsfc.com/widget/next-fixture.json.php?key=' . urlencode($api_key) . '&team=' . urlencode($team) . '&timezone=' . urlencode($timezone));
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
