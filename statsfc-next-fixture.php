@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.2.1
+Version: 1.3
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -149,7 +149,7 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/widget/next-fixture.json.php?key=' . urlencode($api_key) . '&team=' . urlencode($team) . '&timezone=' . urlencode($timezone));
+			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/next-fixture.php?key=' . urlencode($api_key) . '&team=' . urlencode($team) . '&timezone=' . urlencode($timezone));
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
@@ -161,56 +161,55 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception($json->error);
 			}
 
-			$fixture	= $json->fixture;
+			$match		= $json->match;
 			$customer	= $json->customer;
 
 			if ($default_css) {
 				wp_register_style(STATSFC_NEXTFIXTURE_ID . '-css', plugins_url('all.css', __FILE__));
 				wp_enqueue_style(STATSFC_NEXTFIXTURE_ID . '-css');
 			}
-
-			$home			= esc_attr($fixture->home);
-			$away			= esc_attr($fixture->away);
-			$homePath		= esc_attr($fixture->homepath);
-			$awayPath		= esc_attr($fixture->awaypath);
-			$competition	= esc_attr($fixture->competition);
-			$date			= esc_attr($fixture->date);
-			$time			= esc_attr($fixture->time);
 			?>
 			<div class="statsfc_nextfixture">
 				<table>
 					<tbody>
 						<tr>
 							<td class="statsfc_home">
-								<img src="//api.statsfc.com/kit/<?php echo $homePath; ?>.png" title="<?php echo $home; ?>" width="80" height="80"><br>
-								<span class="statsfc_team"><?php echo $home; ?></span>
+								<img src="//api.statsfc.com/kit/<?php echo esc_attr($match->homepath); ?>.png" title="<?php echo esc_attr($match->home); ?>" width="80" height="80"><br>
+								<span class="statsfc_team"><?php echo esc_attr($match->home); ?></span>
 							</td>
 							<td class="statsfc_details">
-								<span class="statsfc_competition"><?php echo $competition; ?></span><br>
-								<span class="statsfc_date"><?php echo $date; ?></span><br>
-								<span class="statsfc_time"><?php echo $time; ?></span>
+								<span class="statsfc_competition"><?php echo esc_attr($match->competition); ?></span><br>
+								<span>
+									<?php
+									if (! $match->started) {
+									?>
+										<span class="statsfc_date"><?php echo esc_attr($match->date); ?></span><br>
+										<span class="statsfc_time"><?php echo esc_attr($match->time); ?></span>
+									<?php
+									} else {
+									?>
+										<span>
+											<small>Live: <?php echo esc_attr($match->status); ?></small><br>
+											<?php echo esc_attr($match->score[0]); ?> - <?php echo esc_attr($match->score[1]); ?>
+										</span>
+									<?php
+									}
+									?>
+								</span>
 							</td>
 							<td class="statsfc_away">
-								<img src="//api.statsfc.com/kit/<?php echo $awayPath; ?>.png" title="<?php echo $away; ?>" width="80" height="80"><br>
-								<span class="statsfc_team"><?php echo $away; ?></span>
+								<img src="//api.statsfc.com/kit/<?php echo esc_attr($match->awaypath); ?>.png" title="<?php echo esc_attr($match->away); ?>" width="80" height="80"><br>
+								<span class="statsfc_team"><?php echo esc_attr($match->away); ?></span>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 
-				<?php
-				if ($customer->advert) {
-				?>
-					<p class="statsfc_footer"><small>Powered by StatsFC.com</small></p>
-				<?php
-				}
-				?>
+				<p class="statsfc_footer"><small>Powered by StatsFC.com. Fan data via CrowdScores.com</small></p>
 			</div>
 		<?php
 		} catch (Exception $e) {
-		?>
-			<p>StatsFC.com – <?php echo esc_attr($e->getMessage()); ?></p>
-		<?php
+			echo '<p style="text-align: center;">StatsFC.com – ' . esc_attr($e->getMessage()) .'</p>' . PHP_EOL;
 		}
 
 		echo $after_widget;

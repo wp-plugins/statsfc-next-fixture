@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, fixtures, premier league, fa cup, league cup
 Requires at least: 3.3
 Tested up to: 3.5.1
-Stable tag: 1.2.1
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,50 +43,29 @@ If you want to place the widget into a page rather than a sidebar:
 
 == Changelog ==
 
-**1.0.1**:
+**1.0.1**: Fixed timezone adjustment bug in old versions of PHP. If using an old version, you'll need to choose your own UTC offset in the options.
 
-- Fixed timezone adjustment bug in old versions of PHP.
-- If using an old version, you'll need to choose your own UTC offset in the options.
+**1.0.2**: Use cURL to fetch API data if possible.
 
-**1.0.2**:
+**1.0.3**: Use short team names.
 
-- Use cURL to fetch API data if possible.
+**1.0.4**: Minor team shirt CSS bug fixes.
 
-**1.0.3**:
+**1.0.5**: Fixed possible cURL bug.
 
-- Use short team names.
+**1.0.6**: Added fopen fallback if cURL request fails.
 
-**1.0.4**:
+**1.0.7**: Fixed possible Timezone bug.
 
-- Minor team shirt CSS bug fixes.
+**1.1**: Show live score if there's a match ongoing.
 
-**1.0.5**:
+**1.1.1**: Tweaked error message.
 
-- Fixed possible cURL bug.
+**1.2**: Allow an actual timezone to be selected, and use the new API.
 
-**1.0.6**:
+**1.2.1**: Improved timezone list.
 
-- Added fopen fallback if cURL request fails.
-
-**1.0.7**:
-
-- Fixed possible Timezone bug.
-
-**1.1**:
-
-- Show live score if there's a match ongoing.
-
-**1.1.1**:
-
-- Tweaked error message.
-
-**1.2**:
-
-- Allow an actual timezone to be selected, and use the new API.
-
-**1.2.1**:
-
-- Improved timezone list.
+**1.3**: Updated to use the new API.
 
 == Upgrade notice ==
 
