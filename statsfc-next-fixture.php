@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.3.1
+Version: 1.4
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -51,6 +51,7 @@ class StatsFC_NextFixture extends WP_Widget {
 			'title'			=> __('Next Fixture', STATSFC_NEXTFIXTURE_ID),
 			'api_key'		=> __('', STATSFC_NEXTFIXTURE_ID),
 			'team'			=> __('', STATSFC_NEXTFIXTURE_ID),
+			'date'			=> __('', STATSFC_NEXTFIXTURE_ID),
 			'timezone'		=> __('Europe/London', STATSFC_NEXTFIXTURE_ID),
 			'default_css'	=> __('', STATSFC_NEXTFIXTURE_ID)
 		);
@@ -59,6 +60,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= strip_tags($instance['title']);
 		$api_key		= strip_tags($instance['api_key']);
 		$team			= strip_tags($instance['team']);
+		$date			= strip_tags($instance['date']);
 		$timezone		= strip_tags($instance['timezone']);
 		$default_css	= strip_tags($instance['default_css']);
 		?>
@@ -78,6 +80,12 @@ class StatsFC_NextFixture extends WP_Widget {
 			<label>
 				<?php _e('Team', STATSFC_NEXTFIXTURE_ID); ?>:
 				<input class="widefat" name="<?php echo $this->get_field_name('team'); ?>" type="text" value="<?php echo esc_attr($team); ?>">
+			</label>
+		</p>
+		<p>
+			<label>
+				<?php _e('Date (YYYY-MM-DD)', STATSFC_NEXTFIXTURE_ID); ?>:
+				<input class="widefat" name="<?php echo $this->get_field_name('date'); ?>" type="text" value="<?php echo esc_attr($date); ?>" placeholder="YYYY-MM-DD">
 			</label>
 		</p>
 		<p>
@@ -118,6 +126,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$instance['title']			= strip_tags($new_instance['title']);
 		$instance['api_key']		= strip_tags($new_instance['api_key']);
 		$instance['team']			= strip_tags($new_instance['team']);
+		$instance['date']			= strip_tags($new_instance['date']);
 		$instance['timezone']		= strip_tags($new_instance['timezone']);
 		$instance['default_css']	= strip_tags($new_instance['default_css']);
 
@@ -138,6 +147,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= apply_filters('widget_title', $instance['title']);
 		$api_key		= $instance['api_key'];
 		$team			= $instance['team'];
+		$date			= $instance['date'];
 		$timezone		= $instance['timezone'];
 		$default_css	= $instance['default_css'];
 
@@ -149,7 +159,7 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/next-fixture.php?key=' . urlencode($api_key) . '&team=' . urlencode($team) . '&timezone=' . urlencode($timezone));
+			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/next-fixture.php?key=' . urlencode($api_key) . '&team=' . urlencode($team) . '&date=' . urlencode($date) . '&timezone=' . urlencode($timezone));
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
