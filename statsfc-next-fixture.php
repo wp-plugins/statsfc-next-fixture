@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.5.3
+Version: 1.5.4
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -214,7 +214,7 @@ HTML;
 				<table>
 					<tbody>
 						<tr>
-							<td class="statsfc_home">
+							<td class="statsfc_home statsfc_badge_{$homeBadge}">
 								<img src="//api.statsfc.com/kit/{$homeBadge}.svg" title="{$home}" width="80" height="80"><br>
 								<span class="statsfc_team">{$home}</span>
 							</td>
@@ -222,7 +222,7 @@ HTML;
 								<span class="statsfc_competition">{$competition}</span><br>
 								<span>{$details}</span>
 							</td>
-							<td class="statsfc_away">
+							<td class="statsfc_away statsfc_badge_{$awayBadge}">
 								<img src="//api.statsfc.com/kit/{$awayBadge}.svg" title="{$away}" width="80" height="80"><br>
 								<span class="statsfc_team">{$away}</span>
 							</td>
