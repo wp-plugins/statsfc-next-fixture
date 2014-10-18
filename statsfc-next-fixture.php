@@ -231,7 +231,7 @@ HTML;
 				</table>
 HTML;
 
-			if ($customer->advert) {
+			if ($customer->attribution) {
 				$html .= <<< HTML
 				<p class="statsfc_footer"><small>Powered by StatsFC.com. Fan data via CrowdScores.com</small></p>
 HTML;
