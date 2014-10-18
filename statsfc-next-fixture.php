@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.5.5
+Version: 1.6
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -230,6 +230,15 @@ HTML;
 					</tbody>
 				</table>
 HTML;
+
+			if ($customer->adSupported) {
+				wp_register_script(STATSFC_NEXTFIXTURE_ID . '-ad-js', plugins_url('ad.js', __FILE__), array('jquery'));
+				wp_enqueue_script(STATSFC_NEXTFIXTURE_ID . '-ad-js');
+
+				$html .= <<< HTML
+				<div class="statsfc_ad"></div>
+HTML;
+			}
 
 			if ($customer->attribution) {
 				$html .= <<< HTML
