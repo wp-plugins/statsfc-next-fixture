@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, fixtures, premier league, fa cup, league cup
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 1.6
+Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,7 @@ You can also use the `[statsfc-next-fixture]` shortcode, with the following opti
 
 - `key` (required): Your StatsFC key
 - `team` (required): Team name, e.g., `Liverpool`
+- `competition` (optional): Competition key, e.g., `EPL`
 - `date` (optional): For a back-dated match, e.g., `2013-12-31`
 - `timezone` (optional): The timezone to convert match times to, e.g., `Europe/London` ([complete list](https://php.net/manual/en/timezones.php))
 - `default_css` (optional): Use the default widget styles, `true` or `false`
@@ -80,6 +81,8 @@ You can also use the `[statsfc-next-fixture]` shortcode, with the following opti
 **1.5.5**: Use built-in WordPress HTTP API functions
 
 **1.6**: Enabled ad-support
+
+**1.6.1**: Added a `competition` parameter
 
 == Upgrade notice ==
 

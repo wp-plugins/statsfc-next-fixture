@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Next Fixture
-Version: 1.6
+Version: 1.6.1
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -38,6 +38,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		'title'			=> '',
 		'key'			=> '',
 		'team'			=> '',
+		'competition'	=> '',
 		'date'			=> '',
 		'timezone'		=> 'Europe/London',
 		'default_css'	=> true
@@ -62,6 +63,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= strip_tags($instance['title']);
 		$key			= strip_tags($instance['key']);
 		$team			= strip_tags($instance['team']);
+		$competition	= strip_tags($instance['competition']);
 		$date			= strip_tags($instance['date']);
 		$timezone		= strip_tags($instance['timezone']);
 		$default_css	= strip_tags($instance['default_css']);
@@ -82,6 +84,40 @@ class StatsFC_NextFixture extends WP_Widget {
 			<label>
 				<?php _e('Team', STATSFC_NEXTFIXTURE_ID); ?>:
 				<input class="widefat" name="<?php echo $this->get_field_name('team'); ?>" type="text" value="<?php echo esc_attr($team); ?>">
+			</label>
+		</p>
+		<p>
+			<label>
+				<?php _e('Competition', STATSFC_NEXTFIXTURE_ID); ?>:
+				<?php
+				try {
+					$data = $this->_fetchData('https://api.statsfc.com/crowdscores/competitions.php');
+
+					if (empty($data)) {
+						throw new Exception;
+					}
+
+					$json = json_decode($data);
+
+					if (isset($json->error)) {
+						throw new Exception;
+					}
+					?>
+					<select class="widefat" name="<?php echo $this->get_field_name('competition'); ?>">
+						<option value="">Any</option>
+						<?php
+						foreach ($json as $comp) {
+							echo '<option value="' . esc_attr($comp->key) . '"' . ($comp->key == $competition ? ' selected' : '') . '>' . esc_attr($comp->name) . '</option>' . PHP_EOL;
+						}
+						?>
+					</select>
+				<?php
+				} catch (Exception $e) {
+				?>
+					<input class="widefat" name="<?php echo $this->get_field_name('competition'); ?>" type="text" value="<?php echo esc_attr($competition); ?>">
+				<?php
+				}
+				?>
 			</label>
 		</p>
 		<p>
@@ -128,6 +164,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$instance['title']			= strip_tags($new_instance['title']);
 		$instance['key']			= strip_tags($new_instance['key']);
 		$instance['team']			= strip_tags($new_instance['team']);
+		$instance['competition']	= strip_tags($new_instance['competition']);
 		$instance['date']			= strip_tags($new_instance['date']);
 		$instance['timezone']		= strip_tags($new_instance['timezone']);
 		$instance['default_css']	= strip_tags($new_instance['default_css']);
@@ -149,6 +186,7 @@ class StatsFC_NextFixture extends WP_Widget {
 		$title			= apply_filters('widget_title', $instance['title']);
 		$key			= $instance['key'];
 		$team			= $instance['team'];
+		$competition	= $instance['competition'];
 		$date			= $instance['date'];
 		$timezone		= $instance['timezone'];
 		$default_css	= filter_var($instance['default_css'], FILTER_VALIDATE_BOOLEAN);
@@ -161,7 +199,7 @@ class StatsFC_NextFixture extends WP_Widget {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/next-fixture.php?key=' . urlencode($key) . '&team=' . urlencode($team) . '&date=' . urlencode($date) . '&timezone=' . urlencode($timezone));
+			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/next-fixture.php?key=' . urlencode($key) . '&team=' . urlencode($team) . '&competition=' . urlencode($competition) . '&date=' . urlencode($date) . '&timezone=' . urlencode($timezone));
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
