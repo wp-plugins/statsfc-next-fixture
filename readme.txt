@@ -12,11 +12,11 @@ This widget will show the next fixture for a Premier League team on your website
 
 == Description ==
 
-Add the next fixture for any Premier League team to your WordPress website. To request an API key sign up for free at [statsfc.com](https://statsfc.com).
+Add the next fixture for any Premier League team to your WordPress website. To request a key sign up for your free trial at [statsfc.com](https://statsfc.com).
 
 Fixture times are automatically adjusted to your website's local time.
 
-For a demo, check out [wp.statsfc.com](http://wp.statsfc.com).
+For a demo, check out [wp.statsfc.com/next-fixture/](http://wp.statsfc.com/next-fixture/).
 
 == Installation ==
 
