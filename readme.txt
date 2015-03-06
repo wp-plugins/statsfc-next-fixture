@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, fixtures, premier league, fa cup, league cup
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,8 @@ You can also use the `[statsfc-next-fixture]` shortcode, with the following opti
 **1.6**: Enabled ad-support
 
 **1.6.1**: Added a `competition` parameter
+
+**1.6.2**: Allow more discrete ads for ad-supported accounts
 
 == Upgrade notice ==
 
