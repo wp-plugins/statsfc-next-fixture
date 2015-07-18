@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/widgets/next-fixture
 Description: StatsFC Next Fixture
-Version: 1.7
+Version: 1.7.1
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -27,7 +27,7 @@ License: GPL2
 
 define('STATSFC_NEXTFIXTURE_ID',      'StatsFC_NextFixture');
 define('STATSFC_NEXTFIXTURE_NAME',    'StatsFC Next Fixture');
-define('STATSFC_NEXTFIXTURE_VERSION', '1.7');
+define('STATSFC_NEXTFIXTURE_VERSION', '1.7.1');
 
 
 /**
@@ -202,26 +202,24 @@ class StatsFC_NextFixture extends WP_Widget
         // Enqueue widget JS
         $object = 'statsfc_next_fixture_' . $unique_id;
 
-        $GLOBALS['statsfc_next_fixture_init']  = '<script>' . PHP_EOL;
-        $GLOBALS['statsfc_next_fixture_init'] .= 'var ' . $object . ' = new StatsFC_NextFixture(' . json_encode($key) . ');' . PHP_EOL;
-        $GLOBALS['statsfc_next_fixture_init'] .= $object . '.referer = ' . json_encode($referer) . ';' . PHP_EOL;
+        $script  = '<script>' . PHP_EOL;
+        $script .= 'var ' . $object . ' = new StatsFC_NextFixture(' . json_encode($key) . ');' . PHP_EOL;
+        $script .= $object . '.referer = ' . json_encode($referer) . ';' . PHP_EOL;
 
         foreach (static::$whitelist as $parameter) {
             if (! array_key_exists($parameter, $options)) {
                 continue;
             }
 
-            $GLOBALS['statsfc_next_fixture_init'] .= $object . '.' . $parameter . ' = ' . json_encode($options[$parameter]) . ';' . PHP_EOL;
+            $script .= $object . '.' . $parameter . ' = ' . json_encode($options[$parameter]) . ';' . PHP_EOL;
         }
 
-        $GLOBALS['statsfc_next_fixture_init'] .= $object . '.display("statsfc-next-fixture-' . $unique_id . '");' . PHP_EOL;
-        $GLOBALS['statsfc_next_fixture_init'] .= '</script>';
+        $script .= $object . '.display("statsfc-next-fixture-' . $unique_id . '");' . PHP_EOL;
+        $script .= '</script>';
 
-        add_action('wp_print_footer_scripts', function()
+        add_action('wp_print_footer_scripts', function() use ($script)
         {
-            global $statsfc_next_fixture_init;
-
-            echo $statsfc_next_fixture_init;
+            echo $script;
         });
 
         if ($this->isShortcode) {
