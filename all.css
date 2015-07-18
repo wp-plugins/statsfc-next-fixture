@@ -1,12 +1,10 @@
-.statsfc_nextfixture table {				display: table; width: 100%; border-collapse: collapse; }
-.statsfc_nextfixture tr {					vertical-align: top; }
-.statsfc_nextfixture td {					text-align: center; padding: 2px 5px; }
-.statsfc_nextfixture img {					display: inline; width: 80px; height: 80px; max-width: 80px; max-height: 80px; padding: 0; margin: 0; border: none !important; }
-.statsfc_nextfixture .statsfc_home,
-.statsfc_nextfixture .statsfc_away {		width: 25%; }
-.statsfc_nextfixture .statsfc_team {		font-size: small; position: relative; top: -10px; }
-.statsfc_nextfixture .statsfc_details {		width: 50%; }
-.statsfc_nextfixture .statsfc_competition {	font-size: small; font-weight: bold; }
-.statsfc_nextfixture .statsfc_date {		font-weight: bold; }
-.statsfc_nextfixture .statsfc_score {		font-size: 1.5em; }
-.statsfc_nextfixture .statsfc_footer {		display: block !important; text-align: center; }
+.sfc_nextfixture table {			display: table; width: 100%; border-collapse: collapse; }
+.sfc_nextfixture td {				text-align: center !important; padding: 2px 5px; vertical-align: middle; }
+.sfc_nextfixture .sfc_home,
+.sfc_nextfixture .sfc_away {		width: 25%; }
+.sfc_nextfixture .sfc_team {		font-size: small; position: relative; top: -10px; }
+.sfc_nextfixture .sfc_details {		width: 50%; }
+.sfc_nextfixture .sfc_competition {	font-size: small; font-weight: bold; }
+.sfc_nextfixture .sfc_date {		font-weight: bold; }
+.sfc_nextfixture .sfc_score {		font-size: 1.5em; }
+.sfc_nextfixture .sfc_footer {		display: block !important; text-align: center; }

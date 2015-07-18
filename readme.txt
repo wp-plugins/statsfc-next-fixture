@@ -3,8 +3,8 @@ Contributors: willjw
 Donate link:
 Tags: widget, football, soccer, fixtures, premier league, fa cup, league cup
 Requires at least: 3.3
-Tested up to: 4.0
-Stable tag: 1.6.2
+Tested up to: 4.2.2
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Add the next fixture for any Premier League team to your WordPress website. To r
 
 Fixture times are automatically adjusted to your website's local time.
 
-For a demo, check out [wp.statsfc.com/next-fixture/](http://wp.statsfc.com/next-fixture/).
+For a demo, check out [wp.statsfc.com/](http://wp.statsfc.com/).
 
 == Installation ==
 
@@ -85,6 +85,8 @@ You can also use the `[statsfc-next-fixture]` shortcode, with the following opti
 **1.6.1**: Added a `competition` parameter
 
 **1.6.2**: Allow more discrete ads for ad-supported accounts
+
+**1.7**: Converted to JS widget
 
 == Upgrade notice ==
 
