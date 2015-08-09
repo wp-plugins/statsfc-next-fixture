@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Next Fixture
 Plugin URI: https://statsfc.com/widgets/next-fixture
 Description: StatsFC Next Fixture
-Version: 1.7.1
+Version: 1.7.2
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -27,7 +27,7 @@ License: GPL2
 
 define('STATSFC_NEXTFIXTURE_ID',      'StatsFC_NextFixture');
 define('STATSFC_NEXTFIXTURE_NAME',    'StatsFC Next Fixture');
-define('STATSFC_NEXTFIXTURE_VERSION', '1.7.1');
+define('STATSFC_NEXTFIXTURE_VERSION', '1.7.2');
 
 
 /**
@@ -174,7 +174,7 @@ class StatsFC_NextFixture extends WP_Widget
         $title       = apply_filters('widget_title', $instance['title']);
         $unique_id   = ++static::$count;
         $key         = $instance['key'];
-        $referer     = (array_key_exists('HTTP_REFERER', $_SERVER) ? parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) : '');
+        $referer     = (array_key_exists('HTTP_HOST', $_SERVER) ? $_SERVER['HTTP_HOST'] : '');
         $default_css = filter_var($instance['default_css'], FILTER_VALIDATE_BOOLEAN);
 
         $options = array(
